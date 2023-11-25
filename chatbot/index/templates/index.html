@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot UI</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: transparent;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: right;
+            align-items: right;
+            height: 100vh;
+        }
+
+        .chatbox {
+            width: 350px;
+            height:570px;
+            border-radius: 2px;
+            overflow: scroll;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-header {
+        background-color: #3498db;
+        color: #fff;
+        padding: 25px;
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+        .chat-header img {
+        float: left;
+        width: 200px;
+        height: 60px;
+        margin-right: 10px;
+    }
+
+        .chat-body {
+            max-height: 400px;
+            height: 350px;
+            overflow-y: auto;
+            padding: 15px;
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            word-wrap: break-word;
+        }
+
+        .user-message {
+            background-color: #3498db;
+            color: #fff;
+            border-radius: 15px;
+            padding: 10px;
+            max-width: 70%;
+            align-self: flex-end;
+        }
+
+        .bot-message {
+            background-color: #e0e0e0;
+            border-radius: 15px;
+            padding: 10px;
+            max-width: 70%;
+            align-self: flex-start; /* Align bot message to the left */
+        }
+
+        .chat-input {
+            display: flex;
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-top: 1px solid #ddd;
+        }
+
+        .input-field {
+            flex: 1;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            margin-right: 10px;
+            font-size: 14px;
+        }
+
+        .send-btn {
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .bot-img {
+            width: 50px; /* Adjust the width of the bot image */
+            height: 50px; /* Adjust the height of the bot image */
+            border-radius: 50%; /* Make the image circular */
+            margin-right: 10px; /* Add some spacing between the image and text */
+        }
+
+        .user-img {
+            width: 50px; /* Adjust the width of the bot image */
+            height: 50px; /* Adjust the height of the bot image */
+            border-radius: 50%; /* Make the image circular */
+            margin-right: 10px; 
+            align-self: flex-end;/* Add some spacing between the image and text */
+        }
+
+        .image-loader {
+            display: flex;
+        }
+
+        .loader:after {
+            display: flex;
+            overflow: hidden;
+            display: inline-block;
+            vertical-align: bottom;
+            animation: ellipsis steps(4, end) 900ms infinite;
+            content: "\2026";
+            /* ascii code for the ellipsis character */
+            width: 0px;
+        }
+
+        @keyframes ellipsis {
+            to {
+                width: 40px;
+            }
+        }
+
+        @-webkit-keyframes ellipsis {
+            to {
+                width: 40px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="chatbox">
+
+        <div class="chat-header">
+            <img src="/static/Company.png" alt="Your Image">
+           
+        </div>
+        <div class="chat-body" id="chatBody">
+            <div class="image-loader">
+                <img class="bot-img" src="/static/bot.jpg" alt="Bot Image">
+                <!-- <p class="loader" id="loader" style="display: none;"></p> -->
+            </div>
+            <div class="bot-message">Hello! How can I help you today?</div>
+        </div>
+        <div class="chat-input">
+            <input type="text" id="userInput" class="input-field" placeholder="Type your message...">
+            <button onclick="sendMessage()" class="send-btn">Send</button>
+        </div>
+    </div>
+
+    <script>
+        function sendMessage() {
+            
+            // document.getElementById('loader').style.display='';
+            const userInput = document.getElementById('userInput').value;
+            const chatBody = document.getElementById('chatBody');
+
+            const loaderdiv=document.createElement('div');
+            loaderdiv.className='image-loader'
+            const loader=document.createElement('p');
+            loader.className='loader'
+
+            if (userInput.trim() !== '') {
+                const userMessage = document.createElement('div');
+                const userImage=document.createElement('img');
+                userImage.className='user-img';
+                userImage.src='/static/user.jpeg';
+                userImage.alt='Bot Image',
+
+                userMessage.className = 'message user-message';
+                userMessage.innerHTML = userInput;
+                chatBody.appendChild(userImage);
+                chatBody.appendChild(userMessage);
+
+
+                const botImage=document.createElement('img');
+                botImage.className="bot-img";
+                botImage.src = "/static/bot.jpg"; // Replace with the correct path to your bot image
+                botImage.alt = "Bot Image";
+
+                chatBody.appendChild(loaderdiv)
+                loaderdiv.appendChild(botImage);
+                loaderdiv.appendChild(loader);
+
+                // Simulating a bot response (you can replace this with actual bot logic)
+                fetch('/message/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({ query: userInput }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Handle the response data
+                    var elements = document.getElementsByClassName('loader');
+                    for(var i = 0; i < elements.length; i++){
+                        elements[i].style.display = 'none';
+                    }
+
+                    console.log(data.response);
+                    const botMessage = document.createElement('div');
+                   
+                    
+                    botMessage.className = 'message bot-message';
+                    botMessage.textContent = data.response;
+                    chatBody.appendChild(botMessage);
+                    chatBody.scrollTop = chatBody.scrollHeight;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+
+                // Clear the input field
+                document.getElementById('userInput').value = '';
+
+                // Scroll to the bottom of the chatbox
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!-- <button id="toggleButton">Show/Hide Chatbot</button> -->
+
+<button id="toggleButton" style="
+box-sizing: border-box;
+border: none;
+position: fixed;
+bottom: 20px; right: 20px;
+box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 4px, rgba(0, 0, 0, 0.2) 0px 2px 12px;
+border-radius: 50%;
+height: 60px;
+width: 60px;
+transition: transform 100ms ease-in-out 0s;
+background-color: green;
+color:white
+
+">Open Chatbot</button>
+
+    <iframe id="chatbotIframe" src="http://localhost:8000/index/" allowTransparency="True" style="position: fixed; bottom: 90px; right: 20px; width: 22%; height: 580px; display: none;">
+        <p>Your browser does not support iframes.</p>
+    </iframe>
+    <script>
+    document.getElementById('toggleButton').addEventListener('click', function() {
+        var iframe = document.getElementById('chatbotIframe');
+        if (iframe.style.display === 'none' || iframe.style.display === '') {
+            iframe.style.display = 'block';
+            document.getElementById('toggleButton').innerHTML="Close Chatbot";
+            document.getElementById('toggleButton').style.backgroundColor='orange';
+        } else {
+            iframe.style.display = 'none';
+            document.getElementById('toggleButton').innerHTML="Open Chatbot";
+            document.getElementById('toggleButton').style.backgroundColor='green';
+        }
+    });
+    document.getElementById("toggleButton").addEventListener('mouseover', function() {
+    document.getElementById('toggleButton').style.height = '65px';
+    document.getElementById('toggleButton').style.width = '65px';
+});
+
+    document.getElementById("toggleButton").addEventListener('mouseout', function() {
+    document.getElementById('toggleButton').style.height = '60px';
+    document.getElementById('toggleButton').style.width = '60px';
+    })
+
+    window.addEventListener('resize', function() {
+        var iframe = document.getElementById('chatbotIframe');
+        iframe.style.width = window.innerWidth * 0.23 + 'px';
+        iframe.style.height = window.innerHeight * 0.8 + 'px'; // Adjust this value as needed
+    });
+    </script>
